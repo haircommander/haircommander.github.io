@@ -1,10 +1,12 @@
 body{
-	background-color: blue;
+	background-color: black;
 	position: center;
-	color: white;
+	color: green;
 }
 h1{
-		font-size: 40px;
-		color: gray;
-
+		font-size: 50px;
+		position: center;
 	}
+.btn {
+	
+}

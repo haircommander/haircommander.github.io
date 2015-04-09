@@ -3,8 +3,10 @@ body{
 	position: center;
 	color: green;
 }
-h1{
-		font-size: 40px;
-		color: gray;
-
+.heading{
+		font-size: 100px;
+		position: center;
 	}
+.btn {
+	
+}
