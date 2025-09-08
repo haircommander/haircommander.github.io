@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Ruuvi Temperature Chart</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   <style>
     body { font-family: sans-serif; text-align: center; padding: 2em; background: #f6f8fa; }
     canvas { max-width: 800px; margin: 0 auto; }
@@ -11,20 +12,17 @@
   </style>
 </head>
 <body>
-  <h1>Ruuvi Temperature (Past 24h)</h1>
+  <h1>Sauna Temperature</h1>
   <canvas id="tempChart" width="800" height="400"></canvas>
   <div id="updated">Last updated: never</div>
   <script>
-    // Replace with your actual token and sensor MAC
-    const ACCESS_TOKEN = 'your-access-token-here';
-    const SENSOR_MAC = 'FD:48:9A:5B:C7:B9'; // Uppercase, colon-separated
     const chartCtx = document.getElementById('tempChart').getContext('2d');
     const tempChart = new Chart(chartCtx, {
       type: 'line',
       data: {
         labels: [],
         datasets: [{
-          label: 'Temperature (°C)',
+          label: 'Temperature (°F)',
           data: [],
           borderColor: 'rgba(255, 99, 132, 1)',
           fill: false,
@@ -40,20 +38,14 @@
             title: { display: true, text: 'Time' }
           },
           y: {
-            title: { display: true, text: '°C' }
+            title: { display: true, text: '°F' }
           }
         }
       }
     });
     async function fetchTemperatureHistory() {
-      const now = Math.floor(Date.now() / 1000);
-      const yesterday = now - 24 * 3600;
-      const url = `https://network.ruuvi.com/history?sensor=${encodeURIComponent(SENSOR_MAC)}&start=${yesterday}&end=${now}`;
-      const res = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${ACCESS_TOKEN}`
-        }
-      });
+      const url = `https://jdq7kp56thhkvdzgeskszc4w2a0ytizh.lambda-url.us-east-2.on.aws/`;
+      const res = await fetch(url);
       if (!res.ok) {
         console.error('Fetch error:', res.status);
         return;
@@ -70,7 +62,8 @@
         if (ff === -1 || bytes[ff+1] !== 0x99 || bytes[ff+2] !== 0x04 || bytes[ff+3] !== 0x05) continue;
         const tempRaw = (bytes[ff+4] << 8) | bytes[ff+5];
         const tempSigned = (tempRaw << 16) >> 16;
-        const temp = tempSigned * 0.005 + offset;
+        const celsius = tempSigned * 0.005 + offset;
+        const temp = (celsius * 9 / 5) + 32;
         const time = new Date(m.timestamp * 1000);
         labels.push(time);
         temps.push(temp);
