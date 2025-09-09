@@ -22,12 +22,18 @@
       data: {
         labels: [],
         datasets: [{
-          label: 'Temperature (°F)',
+          label: 'Temperature Sensor 1 (°F)',
           data: [],
           borderColor: 'rgba(255, 99, 132, 1)',
           fill: false,
           tension: 0.1
-        }]
+		}, {
+          label: 'Temperature Sensor 2 (°F)',
+          data: [],
+          borderColor: 'rgba(255, 99, 132, 1)',
+          fill: false,
+          tension: 0.1
+		}]
       },
       options: {
         responsive: true,
@@ -51,6 +57,11 @@
         return;
       }
       const json = await res.json();
+      const res1 = fetchTemperatureHistoryFromSource(json?.sensor1, tempChart.data.datasets[0]);
+      // const res2 = fetchTemperatureHistoryFromSource(json?.sensor2, tempChart.data.datasets[1]);
+	}
+
+	async function fetchTemperatureHistoryFromSource(json, dataset) {
       const measurements = json?.data?.measurements ?? [];
       const offset = json?.data?.offsetTemperature ?? 0;
       const labels = [];
@@ -69,7 +80,7 @@
         temps.push(temp);
       }
       tempChart.data.labels = labels;
-      tempChart.data.datasets[0].data = temps;
+      dataset.data = temps;
       tempChart.update();
       document.getElementById('updated').textContent =
         'Last updated: ' + new Date().toLocaleTimeString();
