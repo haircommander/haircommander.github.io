@@ -51,7 +51,7 @@
     });
 
     async function fetchTemperatureHistory() {
-		let labels = [];
+		let labels = new Set();
 		let stoveData = [];
 		let hotRoomData = [];
 
@@ -63,11 +63,10 @@
         }
         const json = await res.json();
         for (const obj of json?.body?.channels) {
-			labels.push(obj.last_seen);
+			tempChart.data.labels.push(obj.last_seen);
 			let idx = String(obj.label).includes("stove") ? 0 : 1;
 			tempChart.data.datasets[idx].data.push(temp(obj));
         }
-        tempChart.data.labels = labels;
         tempChart.update();
 		document.getElementById('updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
     }
