@@ -62,16 +62,13 @@
             return;
         }
         const json = await res.json();
-		console.log(json.body.channels);
         for (const obj of json?.body?.channels) {
 			labels.push(obj.last_seen);
 			let idx = String(obj.label).includes("stove") ? 0 : 1;
 			tempChart.data.datasets[idx].data.push(temp(obj));
-			console.log(idx + " " + temp(obj));
         }
         tempChart.data.labels = labels;
         tempChart.update();
-		console.log(tempChart.data);
 		document.getElementById('updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
     }
 
